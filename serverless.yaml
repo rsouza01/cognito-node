@@ -14,7 +14,6 @@ provider:
   stage:  ${env:NODE_ENV, 'dev'}
   region: ${env:REGION, 'eu-central-1'}
 
-  lambdaHashingVersion: 20201221
   stackName: ${self:service}-${opt:stage, self:provider.stage}-stack 
   apiName: ${self:service}-${opt:stage, self:provider.stage}-api 
 
@@ -33,10 +32,9 @@ provider:
     service: ${self:service}
     
 plugins:
-  - serverless-plugin-typescript 
+  - serverless-esbuild
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-domain-manager
 
 package:
   exclude:
@@ -47,4 +45,8 @@ package:
 
 functions:
   hello:
-    handler: src/functions/hello/index.handler
+    handler: src/functions/hello/handler.main
+    events:
+        - http:
+            path: hello
+            method: post
